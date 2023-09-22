@@ -100,16 +100,6 @@ class GameScene: SKScene {
     
     
     // MARK: - Touches
-    func clearTouch() {
-        if self.currentTouch != nil {
-            self.currentTouch = nil
-        }
-        
-        if !isJoystickHidden {
-            toggleJoystick()
-        }
-    }
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.currentTouch != nil { return }
         if let touch = touches.first {
@@ -147,6 +137,19 @@ class GameScene: SKScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = self.currentTouch {
+            if touches.contains(touch) {
+                self.currentTouch = nil
+
+                innerJoystick.run(.move(to: .zero, duration: joystickMoveTime))
+                innerJoystick.run(.scale(to: 1, duration: joystickScaleTime))
+
+                toggleJoystick()
+            }
+        }
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = self.currentTouch {
             if touches.contains(touch) {
                 self.currentTouch = nil
